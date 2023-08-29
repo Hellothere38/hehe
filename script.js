@@ -1,0 +1,82 @@
+const startButton = document.getElementById('startButton');
+const flower = document.getElementById('flower');
+const timeLeftDisplay = document.getElementById('timeLeft');
+const resultText = document.getElementById('resultText');
+const backToMenuButton = document.getElementById('backToMenuButton');
+const gameContainer = document.getElementById('game');
+const bgAudio = document.getElementById('bgAudio');
+
+let gameInterval;
+let timeLeft = 30;
+let founded = 0;
+
+startButton.addEventListener('click', () => {
+    startGame();
+    playBackgroundAudio();
+});
+
+flower.addEventListener('click', () => {
+    if (gameInterval) {
+        founded++;
+        updateResult();
+        resetFlowerPosition();
+    }
+});
+
+backToMenuButton.addEventListener('click', () => {
+    showPage('menu');
+});
+
+function startGame() {
+    showPage('game');
+    timeLeft = 30;
+    founded = 0;
+    updateResult();
+    gameInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft < 0) {
+            endGame();
+        } else {
+            updateResult();
+            resetFlowerPosition();
+        }
+    }, 1000);
+}
+
+function endGame() {
+    clearInterval(gameInterval);
+    gameInterval = null;
+    stopBackgroundAudio();
+    showPage('results');
+}
+
+function updateResult() {
+    timeLeftDisplay.textContent = timeLeft;
+    resultText.textContent = `Jews Founded: ${founded}`;
+}
+
+function resetFlowerPosition() {
+    const x = Math.random() * (gameContainer.clientWidth - flower.clientWidth);
+    const y = Math.random() * (gameContainer.clientHeight - flower.clientHeight);
+    flower.style.left = `${x}px`;
+    flower.style.top = `${y}px`;
+}
+
+function playBackgroundAudio() {
+    bgAudio.play();
+}
+
+function stopBackgroundAudio() {
+    bgAudio.pause();
+}
+
+function showPage(pageId) {
+    const pages = document.querySelectorAll('.page');
+    pages.forEach(page => {
+        page.style.display = 'none';
+    });
+    document.getElementById(pageId).style.display = 'block';
+}
+
+// Initially show the menu page
+showPage('menu');
